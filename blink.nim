@@ -1,43 +1,21 @@
+{.deadCodeElim: off.}
 import unsigned
 const
-  DDRBaddr = 0x04 + 0x20
-  PORTBaddr = 0x05 + 0x20
+  pinNr = 13
 
-type
-  byteaddr = ptr uint8
+proc delay(ms: uint16) {.importc.}
+proc digitalWrite(pin: uint8, value: uint8) {.importc.}
+proc pinMode(pin: uint8, mode: uint8) {.importc.}
 
+var high{.importc: "HIGH", nodecl.}: uint8 
+var low{.importc: "LOW", nodecl.}: uint8 
+var output{.importc: "OUTPUT", nodecl.}: uint8 
 
-#proc blink() = 
-#  echo "blink"
+proc setup() {.exportc.} =
+  pinMode(pinNr, output)
 
-proc blank() =
-  var
-    delay : uint16 = 1000
-    value : uint8 = 0
-    DDRB {.volatile.} : byteaddr = cast[byteaddr](DDRBaddr)
-    PORTB {.volatile.} : byteaddr = cast[byteaddr](PORTBaddr)
-
-#proc DDRB(value: uint8) = 
-#  cast[ptr uint8](DDRBaddr) = value
-
-#proc PORTB(value: uint8) = 
-#  cast[ptr uint8](PORTBaddr) = value
-
-
-  # Set pin 5 of port b for output
-  DDRB[] = 0
-  PORTB[] = 255
-
-  while true:
-    PORTB[] = value
-    value = not value
-    delay = 32000
-    while delay != 0:
-      delay -= 1
-
-
-discard blank
-  
-  
-  
-
+proc loop() {.exportc.} =
+  digitalWrite(pinNr, high)
+  delay(1000)
+  digitalWrite(pinNr, low)
+  delay(1000)
